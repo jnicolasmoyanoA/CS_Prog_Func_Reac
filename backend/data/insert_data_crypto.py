@@ -1,33 +1,15 @@
-import asyncpg
 import os
-from dotenv import load_dotenv
+import sys
+import asyncpg
 
-load_dotenv()
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(ROOT_DIR)
 
-DB_CONFIG = {
-    "user": os.getenv("POSTGRES_USER"),
-    "password": os.getenv("POSTGRES_PASSWORD"),
-    "database": os.getenv("POSTGRES_DB"),
-    "host": os.getenv("DB_HOST"),
-    "port": int(os.getenv("POSTGRES_PORT", 5432)),
-    "min_size": 1,
-    "max_size": 5
-}
-
-pool = None
-
-async def connect_db():
-    global pool
-    pool = await asyncpg.create_pool(**DB_CONFIG)
-    print("✅ Conexión a PostgreSQL lista.")
-
-async def close_db():
-    global pool
-    if pool:
-        await pool.close()
-        print("🔒 Conexión a PostgreSQL cerrada.")
+from backend.database.pool import get_pool
 
 async def insert_active_candle(token: str, candle: dict):
+    pool = await get_pool()
+
     insert_query = """
         INSERT INTO active_candles (
             token, open_time, close_time, open, high, low, close, volume, is_closed, updated_at
@@ -59,6 +41,8 @@ async def insert_active_candle(token: str, candle: dict):
 
 
 async def insert_closed_candle(token: str, candle: dict):
+    pool = await get_pool()
+
     query = """
         INSERT INTO closed_candles (
             token, open_time, close_time, open, high, low, close, volume
