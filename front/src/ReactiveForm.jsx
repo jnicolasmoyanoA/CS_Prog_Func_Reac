@@ -48,11 +48,37 @@ const ReactiveForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    console.log('📝 Registro completo:', data);
-    alert('🎉 Registro exitoso');
-    reset(); // limpia el formulario
-  };
+  const onSubmit = async (data) => {
+  try {
+    const response = await fetch("http://localhost:8000/users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nombre: data.nombre,
+        apellido: data.apellido,
+        edad: data.edad,
+        email: data.email,
+        password: data.password,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      alert(`❌ Error: ${errorData.detail || "Error en el registro"}`);
+      return;
+    }
+
+    const result = await response.json();
+    console.log("📝 Usuario registrado:", result);
+    alert("🎉 Registro exitoso");
+    reset();
+  } catch (error) {
+    console.error("❌ Error de red:", error);
+    alert("Error de conexión con el servidor.");
+  }
+};
 
   return (
     <div style={{ maxWidth: '450px', margin: '2rem auto', fontFamily: 'sans-serif' }}>

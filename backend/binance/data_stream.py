@@ -9,7 +9,8 @@ from datetime import datetime
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.append(ROOT_DIR)
 
-from backend.data.extraction_data_crypto import connect_db, close_db, insert_active_candle, insert_closed_candle
+from backend.data.insert_data_crypto import insert_active_candle, insert_closed_candle
+from backend.database.pool import get_pool, close_pool
 
 # Tokens a escuchar
 TOKENS = ["btcusdt", "ethusdt", "bnbusdt", "xrpusdt", "solusdt", "adausdt"]
@@ -34,7 +35,7 @@ def parse_kline(msg: str) -> dict:
     }
 
 async def listen_to_klines():
-    await connect_db()
+    await get_pool()
     try:
         async with websockets.connect(URL) as ws:
             print("📡 Escuchando velas de 5m de:", ", ".join([t.upper() for t in TOKENS]))
@@ -47,7 +48,7 @@ async def listen_to_klines():
                     await insert_closed_candle(token, candle)
                 print(f"[{candle['updated_at']}] {token.upper()} close = {candle['close']} volumen = {candle['volume']}")
     finally:
-        await close_db()
+        await close_pool()
 
 if __name__ == "__main__":
     asyncio.run(listen_to_klines())
