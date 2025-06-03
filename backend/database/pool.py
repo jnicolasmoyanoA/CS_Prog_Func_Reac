@@ -9,7 +9,7 @@ DB_CONFIG = {
     "user": os.getenv("POSTGRES_USER"),
     "password": os.getenv("POSTGRES_PASSWORD"),
     "database": os.getenv("POSTGRES_DB"),
-    "host": os.getenv("DB_HOST", "localhost"),  # importante: si usas Docker, podría ser "crypto_postgres"
+    "host": os.getenv("DB_HOST", "localhost"),
     "port": int(os.getenv("POSTGRES_PORT", 5432)),
     "min_size": 1,
     "max_size": 5
