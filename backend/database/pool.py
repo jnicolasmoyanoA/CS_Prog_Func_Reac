@@ -30,3 +30,13 @@ async def close_pool():
         await pool.close()
         pool = None
         print("🔒 Pool de conexiones cerrado.")
+
+async def fetch_all(query: str, params: dict = None):
+    conn = await get_pool()
+    async with conn.acquire() as connection:
+        statement = await connection.prepare(query)
+        if params:
+            result = await statement.fetch(*params.values())
+        else:
+            result = await statement.fetch()
+        return result

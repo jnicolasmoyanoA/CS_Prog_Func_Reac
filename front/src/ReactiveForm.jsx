@@ -2,6 +2,8 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigate } from 'react-router-dom';
+
 
 // Esquema de validación
 const schema = yup.object().shape({
@@ -47,6 +49,8 @@ const ReactiveForm = () => {
     mode: 'onChange',
     resolver: yupResolver(schema),
   });
+
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
   try {
@@ -172,6 +176,25 @@ const ReactiveForm = () => {
         >
           Registrarse
         </button>
+
+        {/* Botón de ir a login */}
+        <button
+          type="button"
+          onClick={() => navigate('/login')}
+          style={{
+            width: '100%',
+            marginTop: '0.5rem',
+            padding: '0.75rem',
+            backgroundColor: '#fff',
+            color: '#5a2d82',
+            border: '2px solid #5a2d82',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+          }}
+        >
+          ¿Ya tienes cuenta? Iniciar sesión
+        </button>
+
       </form>
     </div>
   );
