@@ -21,7 +21,7 @@ async def insert_active_candle(token: str, candle: dict):
             SELECT open_time FROM active_candles
             WHERE token = $1
             ORDER BY open_time DESC
-            LIMIT 50
+            LIMIT 5000
         );
     """
     async with pool.acquire() as conn:
